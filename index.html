@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PHANTOM RUSH</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;font-family:Arial;overflow:hidden;touch-action:none}
+#game{position:relative;width:100vw;height:100vh;max-width:450px;margin:0 auto;background:radial-gradient(ellipse at center, #1a2a3a 0%, #0a0f1f 50%, #000 100%);overflow:hidden}
+#titleScreen{position:absolute;width:100%;height:100%;background:linear-gradient(#000 0%, #0a0f1f 100%);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center}
+#titleScreen h1{font-family:Creepster;font-size:52px;color:#88ccff;text-shadow:0 0 20px #00aaff}
+#titleScreen h2{font-family:Creepster;color:#ff0044;font-size:46px;margin-top:-8px;text-shadow:0 0 15px red}
+#player{position:absolute;width:42px;height:52px;left:60px;bottom:100px;z-index:10;font-size:38px}
+.enemy{position:absolute;bottom:100px;font-size:50px;z-index:5;filter:drop-shadow(0 0 12px red)}
+#ground{position:absolute;width:100%;height:100px;background:#050505;bottom:0;border-top:2px solid #222}
+#score{position:absolute;top:12px;left:15px;color:#00ffcc;font-size:18px;text-shadow:0 0 6px #00ffcc;z-index:20;font-weight:bold}
+#panel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0a0a;padding:28px;border-radius:12px;text-align:center;display:none;z-index:50;border:2px solid #ff0000;box-shadow:0 0 40px rgba(255,0,0,0.6);width:85%;max-width:350px;color:white}
+.btn{padding:14px;background:#ff0000;color:white;border:none;border-radius:8px;width:100%;margin-top:12px;font-weight:bold;font-size:18px}
+</style>
+</head>
+<body>
+<div id="game">
+<div id="titleScreen" onclick="startGame()">
+<h1>PHANTOM</h1>
+<h2>RUSH</h2>
+<p style="margin-top:20px;font-family:Arial;font-size:14px;opacity:0.7">Tap to escape the phantom...</p>
+<button class="btn" style="width:200px;margin-top:30px">▶ PLAY</button>
+</div>
+<div id="score">DISTANCE: 0m</div>
+<div id="player">🏃‍♀️</div>
+<div id="ground"></div>
+<div id="panel">
+<h2 style="color:#ff0000;font-size:26px;font-family:Creepster">CAUGHT BY THE PHANTOM</h2>
+<p id="final" style="margin:18px 0;font-family:Arial;font-size:16px"></p>
+<button class="btn" onclick="location.reload()">RUN AGAIN</button>
+</div>
+</div>
+<script>
+let title=document.getElementById('titleScreen'),p=document.getElementById('player'),scoreEl=document.getElementById('score'),panel=document.getElementById('panel');
+let y=100,vy=0,jumping=false,score=0,over=false,started=false,enemies=[],lastSpawn=0;
+const gravity=0.9;
+function startGame(){title.style.display='none';started=true;loop();}
+function jump(){if(!jumping&&!over&&started){vy=16;jumping=true;}}
+function spawn(){
+ let el=document.createElement('div');el.className='enemy';el.style.left='500px';
+ let types=['👻','💀','👮‍♂️','👁️']; el.innerHTML=types[Math.floor(Math.random()*types.length)];
+ document.getElementById('game').appendChild(el);
+ enemies.push({el,x:500});
+}
+function gameOver(){
+ over=true;
+ document.getElementById('final').innerText='The phantom caught you after '+Math.floor(score/10)+'m. You are now part of the forest...';
+ panel.style.display='block';
+ if(navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+}
+function loop(){
+ if(!started||over)return;
+ vy-=gravity;y+=vy;if(y<=100){y=100;vy=0;jumping=false;}
+ p.style.bottom=y+'px';
+ if(Date.now()-lastSpawn>850){spawn();lastSpawn=Date.now();}
+ enemies.forEach((en,i)=>{
+   en.x-=7.5+score/1200; en.el.style.left=en.x+'px';
+   if(en.x<85&&en.x>35&&y<135){gameOver();}
+   if(en.x<-60){en.el.remove();enemies.splice(i,1);}
+ });
+ score++; scoreEl.innerText='DISTANCE: '+Math.floor(score/10)+'m';
+ requestAnimationFrame(loop);
+}
+document.addEventListener('touchstart',e=>{e.preventDefault();if(!started)startGame();else jump();},{passive:false});
+document.addEventListener('mousedown',()=>{if(!started)startGame();else jump();});
+document.addEventListener('keydown',e=>{if(e.code=='Space'){if(!started)startGame();else jump();}});
+</script>
+</body>
+</html>
