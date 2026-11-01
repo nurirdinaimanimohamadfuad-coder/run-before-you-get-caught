@@ -1,0 +1,16 @@
+{
+  "name": "Phantom Rush - Run Before You Get Caught",
+  "short_name": "Phantom Rush",
+  "description": "3D horror endless runner Roblox style with joystick, jump and educational math gates",
+  "start_url": "/run-before-you-get-caught/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3607/3607444.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
